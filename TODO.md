@@ -74,9 +74,10 @@
 
 ## 🧪 Testing & DX
 
-- [ ] **Move tests from CJS to ESM**  
+- [x] **Move tests from CJS to ESM**  
   Tests use `require()` in `.cjs` files but import TypeScript via tsx.
-  Move to `.test.ts` with `node:test` + tsx loader.
+  Converted all 4 test files to `.test.ts` with `import`/`export` + `describe` blocks.
+  Added rotation filter test. Updated `pnpm check` script. 26 tests pass.
 - [ ] **Add frontend component tests**  
   Pure logic modules are well covered. Add component tests for the store and critical
   UI interactions using Vitest + `@testing-library/svelte`.
