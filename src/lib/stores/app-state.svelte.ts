@@ -7,6 +7,7 @@ import {
   convert,
   cancel as cancelBinding,
   checkExists,
+  getFileSize,
   getThumbnail,
   probeImage,
   saveFile,
@@ -98,6 +99,7 @@ class AppState {
   isConverting = $state(false);
   cancelRequested = $state(false);
   queue = $state<QueueItem[]>([]);
+  sizeSummary = $state("");
   private conversionTimes: number[] = [];
 
   // ---- logs ----
@@ -319,6 +321,7 @@ class AppState {
       this.queue = createQueue(this.files, intent, (file, intent, index) =>
         planConversion(file, intent, index),
       );
+      this.sizeSummary = "";
     }
     this.isConverting = true;
     this.cancelRequested = false;
@@ -350,7 +353,10 @@ class AppState {
     this.logSummary = "Idle";
     this.appendLog(wasCanceled ? "\nQueue canceled.\n" : "\nQueue finished.\n");
 
-    if (!wasCanceled) this.notifyQueueComplete();
+    if (!wasCanceled) {
+      this.notifyQueueComplete();
+      this.computeSizeSummary();
+    }
   }
 
   private async runConversionPool(
@@ -449,6 +455,32 @@ class AppState {
     const title = summary.failed > 0 ? "Conversion finished with errors" : "Conversion complete";
     const body = parts.join(", ") || "Queue finished";
     showNotification({ title, body });
+  }
+
+  private async computeSizeSummary() {
+    const done = this.queue.filter((item) => item.status === "done");
+    if (!done.length) return;
+
+    let totalIn = 0;
+    let totalOut = 0;
+    const results = await Promise.all(
+      done.map(async (item) => {
+        const [inS, outS] = await Promise.all([
+          getFileSize(item.file.path),
+          getFileSize(item.outputPath),
+        ]);
+        if (inS.ok) totalIn += inS.size;
+        if (outS.ok) totalOut += outS.size;
+      }),
+    );
+    void results;
+
+    if (totalIn === 0 && totalOut === 0) return;
+    const inStr = formatBytes(totalIn);
+    const outStr = formatBytes(totalOut);
+    const ratio = totalIn ? ((totalOut / totalIn) * 100).toFixed(1) : "?";
+    this.sizeSummary = `${inStr} → ${outStr} (${ratio}%)`;
+    this.appendLog(`\nSize: ${this.sizeSummary}\n`);
   }
 
   // ---- log streaming ----
@@ -605,6 +637,12 @@ class AppState {
   }
 
   // ---- helpers exposed to components ----
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 }
 
 // Singleton — imported by every component.

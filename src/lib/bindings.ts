@@ -33,6 +33,12 @@ export interface ExistsResult {
   exists: boolean;
 }
 
+export interface FileSizeResult {
+  ok: boolean;
+  size: number;
+  error?: string;
+}
+
 export interface SaveResult {
   ok: boolean;
   filePath: string;
@@ -121,6 +127,10 @@ export async function cancel(jobId: string): Promise<CancelResult> {
 
 export async function checkExists(filePath: string): Promise<ExistsResult> {
   return invoke<ExistsResult>("check_exists", { path: filePath });
+}
+
+export async function getFileSize(filePath: string): Promise<FileSizeResult> {
+  return invoke<FileSizeResult>("file_size", { path: filePath });
 }
 
 export async function getThumbnail(filePath: string): Promise<ThumbnailResult> {

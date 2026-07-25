@@ -38,6 +38,15 @@ pub struct CancelResult {
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct FileSizeResult {
+    pub ok: bool,
+    pub size: u64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub error: Option<String>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ExistsResult {
     pub ok: bool,
     pub exists: bool,
@@ -179,6 +188,22 @@ pub fn check_exists(path: String) -> ExistsResult {
     ExistsResult {
         ok: true,
         exists: std::path::Path::new(&path).exists(),
+    }
+}
+
+#[tauri::command]
+pub fn file_size(path: String) -> FileSizeResult {
+    match std::fs::metadata(&path) {
+        Ok(m) => FileSizeResult {
+            ok: true,
+            size: m.len(),
+            error: None,
+        },
+        Err(e) => FileSizeResult {
+            ok: false,
+            size: 0,
+            error: Some(e.to_string()),
+        },
     }
 }
 

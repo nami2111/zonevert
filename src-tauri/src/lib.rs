@@ -33,6 +33,7 @@ pub fn run() {
             commands::convert,
             commands::cancel,
             commands::check_exists,
+            commands::file_size,
             commands::save_file,
             commands::image_thumbnail,
             commands::probe_image,

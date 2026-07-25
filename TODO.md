@@ -21,9 +21,10 @@
 
 ### High Impact
 
-- [ ] **Output size summary after conversion**  
+- [x] **Output size summary after conversion**  
   After a queue finishes, show total input bytes → output bytes and compression ratio.
-  This is the core metric people use image converters for.
+  Added `file_size` Rust command, `getFileSize` binding, and `computeSizeSummary()` in the
+  store. Logs "Size: 12.4 MB → 3.2 MB (25.8%)" after each completed queue.
 - [ ] **Convert single file from source list**  
   Per-file "Convert" action (right-click or inline button) so users can test settings
   on one image without running the full queue.
