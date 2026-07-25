@@ -95,6 +95,7 @@ const DEFAULT_SETTINGS: Settings = {
 class AppState {
   // ---- source files ----
   files = $state<SelectedImage[]>([]);
+  selectedFileIndex = $state(-1);
   thumbnails = $state.raw<Map<string, string>>(new Map());
   imageMeta = $state.raw<Map<string, string>>(new Map());
 
@@ -274,6 +275,7 @@ class AppState {
   clearFiles() {
     this.files = [];
     this.queue = [];
+    this.selectedFileIndex = -1;
     this.thumbnails = new Map();
     this.imageMeta = new Map();
   }
@@ -491,6 +493,20 @@ class AppState {
     if (this.isConverting || from === to) return;
     const [moved] = this.queue.splice(from, 1);
     this.queue.splice(to, 0, moved);
+  }
+
+  reorderFiles(from: number, to: number) {
+    if (this.isConverting || from === to) return;
+    const [moved] = this.files.splice(from, 1);
+    this.files.splice(to, 0, moved);
+    // Update selection
+    if (this.selectedFileIndex === from) {
+      this.selectedFileIndex = to;
+    } else if (from < to && this.selectedFileIndex > from && this.selectedFileIndex <= to) {
+      this.selectedFileIndex--;
+    } else if (from > to && this.selectedFileIndex >= to && this.selectedFileIndex < from) {
+      this.selectedFileIndex++;
+    }
   }
 
   private notifyQueueComplete() {

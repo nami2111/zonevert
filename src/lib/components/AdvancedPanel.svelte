@@ -1,6 +1,10 @@
 <script lang="ts">
   import { appState } from "$lib/stores/app-state.svelte";
   import Icon from "./Icon.svelte";
+
+  let coreHint = $derived(navigator.hardwareConcurrency
+    ? `${navigator.hardwareConcurrency} logical cores detected`
+    : "");
 </script>
 
 <details class="panel advanced-panel">
@@ -17,6 +21,9 @@
   <label class="field">
     <span>Parallel jobs</span>
     <input type="number" min="1" max="8" step="1" inputmode="numeric" bind:value={appState.settings.concurrency} onchange={() => appState.persistSettings()} />
+    {#if coreHint}
+      <small class="field-hint">{coreHint}</small>
+    {/if}
   </label>
 
   <label class="field">

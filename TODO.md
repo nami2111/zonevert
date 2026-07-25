@@ -56,14 +56,19 @@
 
 ### Low Hanging Fruit
 
-- [ ] **App version in status bar**  
-  Show `v0.3.7` (or current) in the status bar so users can report accurate versions in bugs.
-- [ ] **Delete key to remove files**  
+- [x] **App version in status bar**  
+  Show `v0.3.7` (or current) in the status bar. Added `define: { __APP_VERSION__ }` in
+  vite.config.ts reading from package.json. Displayed in StatusBar.
+- [x] **Delete key to remove files**  
   Allow `Delete` / `Backspace` to remove selected/highlighted files from the source list.
-- [ ] **Drag-to-reorder source files**  
-  Queue supports drag reorder already — add the same to the source list for parity.
-- [ ] **Concurrency field hint**  
-  Show guidance like "Set to your CPU core count" or auto-detect via `navigator.hardwareConcurrency`.
+  Added `selectedFileIndex` state, click-to-select in SourcePanel, and Delete/Backspace
+  handler in App.svelte. Auto-selects next file after removal.
+- [x] **Drag-to-reorder source files**  
+  Queue supports drag reorder already — added same drag-drop pattern to SourcePanel with
+  `reorderFiles()` store method that preserves selection.
+- [x] **Concurrency field hint**  
+  Show guidance like "Set to your CPU core count". Added `navigator.hardwareConcurrency`
+  detection showing "N logical cores detected" below the parallel jobs input.
 - [ ] **Quality slider snap-to-presets**  
   When changing presets, optionally show preset tick marks on the slider.
 

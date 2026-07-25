@@ -45,7 +45,20 @@
       </div>
     {:else}
       {#each appState.files as file, index (file.path)}
-        <div class="file-row">
+        <div
+          class="file-row"
+          class:file-row--selected={appState.selectedFileIndex === index}
+          class:file-row--draggable={!appState.isConverting}
+          role="option"
+          aria-selected={appState.selectedFileIndex === index}
+          tabindex="0"
+          draggable={!appState.isConverting}
+          ondragstart={(e) => { e.dataTransfer?.setData("text/plain", String(index)); }}
+          ondragover={(e) => { e.preventDefault(); }}
+          ondrop={(e) => { e.preventDefault(); const from = Number(e.dataTransfer?.getData("text/plain")); if (!Number.isNaN(from)) appState.reorderFiles(from, index); }}
+          onclick={() => { appState.selectedFileIndex = index; }}
+          onkeydown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); appState.selectedFileIndex = index; } }}
+        >
           <img class="file-thumb" src={appState.thumbnails.get(file.path)} alt="" />
           <div class="file-info">
             <strong>{file.name || basename(file.path)}</strong>

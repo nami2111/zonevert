@@ -614,9 +614,15 @@ svg {
 }
 
 .file-row:hover,
+.file-row--selected,
 .queue-row:hover {
   border-color: var(--border);
   background: var(--surface-2);
+}
+
+.file-row--selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .file-row strong,
@@ -798,6 +804,14 @@ svg {
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.02em;
+}
+
+.field-hint {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-faint);
+  font-size: 9.5px;
+  font-weight: 500;
 }
 
 /* ---- toggles ---- */

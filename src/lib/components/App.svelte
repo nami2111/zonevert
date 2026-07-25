@@ -52,6 +52,14 @@
     } else if (event.key === "Escape" && appState.isConverting) {
       event.preventDefault();
       appState.cancelCurrentJob();
+    } else if ((event.key === "Delete" || event.key === "Backspace") && appState.selectedFileIndex >= 0) {
+      event.preventDefault();
+      const idx = appState.selectedFileIndex;
+      appState.removeFile(idx);
+      // select next or last after removal
+      appState.selectedFileIndex = appState.files.length
+        ? Math.min(idx, appState.files.length - 1)
+        : -1;
     }
   }
 </script>

@@ -18,6 +18,7 @@
   <span>{formatLabel} / quality {appState.settings.quality}</span>
   <span title={outputLabel}>{outputLabel}</span>
   <span>{queueSummary.text}</span>
+  <span class="status-bar__version" title="Zonevert v{__APP_VERSION__}">v{__APP_VERSION__}</span>
   <span class="status-bar__ffmpeg" title={ffmpegLabel}>
     <span class="status-dot status-dot--{appState.ffmpegStatus}"></span>
     {ffmpegLabel}
