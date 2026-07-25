@@ -6,7 +6,7 @@
   Commit `50dbe30` dropped the sidecar. Code at `ffmpeg.rs:298` says "No bundled
   sidecar — the app relies on a system ffmpeg." Rewrite the FFmpeg section to
   reflect the current resolution order (custom path → `FFMPEG_PATH` env → `ffmpeg` on PATH).
-- [ ] **Log panel auto-scroll snaps away from reading position**  
+- [x] **Log panel auto-scroll snaps away from reading position**  
   `LogPanel.svelte` calls `scrollTop = scrollHeight` on every log change.
   Only auto-scroll when the user is already at the bottom of the scroll area.
 - [ ] **`pnpm-workspace.yaml` has Electron leftovers**  

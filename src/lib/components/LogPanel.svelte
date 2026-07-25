@@ -4,10 +4,13 @@
 
   let logEl = $state<HTMLPreElement>();
 
-  // Auto-scroll to bottom when logs change.
+  // Auto-scroll to bottom when logs change, but only if the user
+  // hasn't scrolled up to read earlier output.
   $effect(() => {
     void appState.logs.length;
-    if (logEl) logEl.scrollTop = logEl.scrollHeight;
+    if (!logEl) return;
+    const atBottom = logEl.scrollHeight - logEl.scrollTop - logEl.clientHeight < 40;
+    if (atBottom) logEl.scrollTop = logEl.scrollHeight;
   });
 
   let logText = $derived(appState.logs.join(""));
