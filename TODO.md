@@ -48,9 +48,11 @@
   Added `RotationMode` type and `buildRotationFilter()` in conversion-plan.ts. Rotation dropdown
   in ResizePanel (renamed to "Transform"): 90° right, 180°, 90° left, flip horizontal/vertical.
   Uses ffmpeg `transpose`, `hflip`, `vflip` filters. Persisted in settings.
-- [ ] **Persistent conversion history**  
+- [x] **Persistent conversion history**  
   Remember the last N conversions (file, format, settings, output path, success/fail)
-  so users can re-run past jobs with a single click.
+  so users can re-run past jobs with a single click. Added HistoryPanel in Setup column,
+  stores last 20 runs in localStorage with settings, file count, and summary. Restore
+  button restores all settings from a past run.
 
 ### Low Hanging Fruit
 

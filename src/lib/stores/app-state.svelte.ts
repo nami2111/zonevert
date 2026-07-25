@@ -59,8 +59,16 @@ export interface Settings {
   outputArgs: string;
 }
 
+export interface HistoryEntry {
+  timestamp: number;
+  fileCount: number;
+  settings: Settings;
+  summary: { done: number; failed: number; skipped: number };
+}
+
 const SETTINGS_KEY = "zonevert:settings";
 const THEME_KEY = "zonevert:theme";
+const HISTORY_KEY = "zonevert:history";
 
 const DEFAULT_SETTINGS: Settings = {
   format: "webp",
@@ -102,6 +110,7 @@ class AppState {
   stopAfterCurrent = $state(false);
   queue = $state<QueueItem[]>([]);
   sizeSummary = $state("");
+  history = $state<HistoryEntry[]>([]);
   private conversionTimes: number[] = [];
 
   // ---- logs ----
@@ -129,6 +138,7 @@ class AppState {
     if (this.platformReady) return;
     this.loadSettings();
     this.loadTheme();
+    this.loadHistory();
     this.platform = await getPlatform();
     this.platformReady = true;
 
@@ -385,6 +395,7 @@ class AppState {
     if (!wasCanceled) {
       this.notifyQueueComplete();
       this.computeSizeSummary();
+      if (!retry) this.saveHistoryEntry();
     }
   }
 
@@ -642,6 +653,47 @@ class AppState {
   persistSettings() {
     try {
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(this.settings));
+    } catch {
+      // localStorage may be unavailable
+    }
+  }
+
+  // ---- history ----
+
+  private loadHistory() {
+    try {
+      const stored = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+      if (Array.isArray(stored)) this.history = stored.slice(0, 20);
+    } catch {
+      // localStorage may be unavailable
+    }
+  }
+
+  private saveHistoryEntry() {
+    const summary = summarizeQueue(this.queue);
+    const entry: HistoryEntry = {
+      timestamp: Date.now(),
+      fileCount: this.files.length,
+      settings: { ...this.settings },
+      summary: { done: summary.done, failed: summary.failed, skipped: summary.skipped },
+    };
+    this.history = [entry, ...this.history].slice(0, 20);
+    try {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(this.history));
+    } catch {
+      // localStorage may be unavailable
+    }
+  }
+
+  restoreHistory(entry: HistoryEntry) {
+    this.settings = { ...DEFAULT_SETTINGS, ...entry.settings };
+    this.persistSettings();
+  }
+
+  clearHistory() {
+    this.history = [];
+    try {
+      localStorage.removeItem(HISTORY_KEY);
     } catch {
       // localStorage may be unavailable
     }

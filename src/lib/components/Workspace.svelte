@@ -4,6 +4,7 @@
   import NamingPanel from "./NamingPanel.svelte";
   import ResizePanel from "./ResizePanel.svelte";
   import AdvancedPanel from "./AdvancedPanel.svelte";
+  import HistoryPanel from "./HistoryPanel.svelte";
   import CommandPanel from "./CommandPanel.svelte";
   import QueuePanel from "./QueuePanel.svelte";
   import LogPanel from "./LogPanel.svelte";
@@ -17,6 +18,7 @@
     <NamingPanel />
     <ResizePanel />
     <AdvancedPanel />
+    <HistoryPanel />
   </div>
 
   <div class="run-column pane">
