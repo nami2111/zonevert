@@ -2,7 +2,17 @@
   import { appState } from "$lib/stores/app-state.svelte";
   import Icon from "./Icon.svelte";
 
+  const QUALITY_HINTS: Record<string, string> = {
+    webp: "Recommended: 75-85 for web photos",
+    jpg: "Recommended: 85-95 for photos",
+    png: "Quality only affects compression level",
+    avif: "Recommended: 30-50 (lower = better quality)",
+    jp2: "Recommended: 70-90",
+    jls: "Recommended: 70-90",
+  };
+
   let folderText = $derived(appState.outputDir || "Same folder as each source");
+  let qualityHint = $derived(QUALITY_HINTS[appState.settings.format] ?? "");
 </script>
 
 <section class="panel" aria-labelledby="outputTitle">
@@ -50,6 +60,9 @@
   <label class="range-field">
     <span>Quality <strong>{appState.settings.quality}</strong></span>
     <input type="range" min="1" max="100" bind:value={appState.settings.quality} oninput={() => appState.persistSettings()} />
+    {#if qualityHint}
+      <small class="quality-hint">{qualityHint}</small>
+    {/if}
   </label>
 
   <div class="toggle-row">
