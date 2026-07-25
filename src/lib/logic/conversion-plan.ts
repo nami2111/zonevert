@@ -89,7 +89,7 @@ const encoderArgs: Record<
   bmp: () => ["-c:v", "bmp"],
   gif: () => ["-c:v", "gif"],
   // ponytail: encoders below are standard in distro ffmpeg builds.
-  apng: () => ["-c:v", "png", "-frames:v", "1"],
+  apng: () => ["-c:v", "apng", "-plays", "0", "-f", "apng"],
   jp2: (quality) => ["-c:v", "libopenjpeg", "-q:v", String(quality)],
   exr: () => ["-c:v", "exr"],
   qoi: () => ["-c:v", "qoi"],

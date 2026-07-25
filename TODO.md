@@ -12,10 +12,10 @@
 - [x] **`pnpm-workspace.yaml` has Electron leftovers**  
   Contains `electron: set this to true or false` and `electron-winstaller` entries.
   This file serves no purpose for a Tauri app — remove it entirely.
-- [ ] **apng encoder is single-frame only**  
+- [x] **apng encoder is single-frame only**  
   `conversion-plan.ts:92`: `apng: () => ["-c:v", "png", "-frames:v", "1"]` extracts one frame
-  from animated inputs. Either support multi-frame APNG output or rename the UI option to
-  "APNG (static, single frame)."
+  from animated inputs. Fixed to use `apng` codec with `-plays 0 -f apng` for proper
+  multi-frame animation output.
 
 ## ✨ Features
 
