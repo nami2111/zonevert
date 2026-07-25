@@ -9,7 +9,7 @@
 - [x] **Log panel auto-scroll snaps away from reading position**  
   `LogPanel.svelte` calls `scrollTop = scrollHeight` on every log change.
   Only auto-scroll when the user is already at the bottom of the scroll area.
-- [ ] **`pnpm-workspace.yaml` has Electron leftovers**  
+- [x] **`pnpm-workspace.yaml` has Electron leftovers**  
   Contains `electron: set this to true or false` and `electron-winstaller` entries.
   This file serves no purpose for a Tauri app — remove it entirely.
 - [ ] **apng encoder is single-frame only**  
