@@ -10,6 +10,7 @@
 
   let hasRunning = $derived(appState.queue.some((item) => item.status === "running"));
   let canCancel = $derived(appState.isConverting && hasRunning && !appState.cancelRequested);
+  let canStopAfter = $derived(appState.isConverting && !appState.stopAfterCurrent);
   let showRetry = $derived(appState.hasFailed && !appState.isConverting);
   let convertLabel = $derived(appState.isConverting ? "Converting" : "Convert");
 
@@ -38,8 +39,11 @@
         <Icon name="play" />
         Retry failed
       </button>
-      <button class="icon-button danger-button" type="button" aria-label="Cancel current job" title="Cancel current job (Esc)" disabled={!canCancel} onclick={() => appState.cancelCurrentJob()}>
+      <button class="icon-button danger-button" type="button" aria-label="Cancel current job" title="Cancel immediately (Esc)" disabled={!canCancel} onclick={() => appState.cancelCurrentJob()}>
         <Icon name="x-circle" />
+      </button>
+      <button class="icon-button" type="button" aria-label="Stop after current" title="Stop after current job" disabled={!canStopAfter} onclick={() => appState.stopAfterCurrentJob()}>
+        <Icon name="x" />
       </button>
     </div>
   </div>

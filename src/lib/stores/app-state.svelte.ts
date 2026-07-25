@@ -97,6 +97,7 @@ class AppState {
   // ---- conversion state ----
   isConverting = $state(false);
   cancelRequested = $state(false);
+  stopAfterCurrent = $state(false);
   queue = $state<QueueItem[]>([]);
   sizeSummary = $state("");
   private conversionTimes: number[] = [];
@@ -354,7 +355,7 @@ class AppState {
       await this.runConversionPool(runnable, intent, concurrency);
     } else {
       for (const item of runnable) {
-        if (this.cancelRequested) {
+        if (this.cancelRequested || this.stopAfterCurrent) {
           markCanceled(item);
           continue;
         }
@@ -384,7 +385,7 @@ class AppState {
 
     const worker = async () => {
       while (queue.length) {
-        if (this.cancelRequested) {
+        if (this.cancelRequested || this.stopAfterCurrent) {
           const skipped = queue.splice(0);
           for (const item of skipped) markCanceled(item);
           return;
@@ -445,6 +446,13 @@ class AppState {
     this.cancelRequested = true;
     this.appendLog("\nCancel requested.\n");
     this.logSummary = "Canceling";
+  }
+
+  stopAfterCurrentJob() {
+    if (!this.isConverting) return;
+    this.stopAfterCurrent = true;
+    this.appendLog("\nStopping after current job.\n");
+    this.logSummary = "Stopping";
   }
 
   async retryFailed() {

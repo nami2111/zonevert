@@ -29,9 +29,11 @@
   Per-file "Convert" action (right-click or inline button) so users can test settings
   on one image without running the full queue. Added play button per file row with
   `convertSingleFile()` store method.
-- [ ] **"Stop after current" cancel mode**  
-  `cancelCurrentJob` immediately SIGTERMs the running ffmpeg. Add a "Finish current, then stop"
-  option for long individual conversions.
+- [x] **"Stop after current" cancel mode**  
+  `cancelCurrentJob` immediately SIGTERMs the running ffmpeg. Added `stopAfterCurrent` flag and
+  `stopAfterCurrentJob()` method. "Cancel" button kills immediately (Esc), new "Stop after
+  current" button lets running job finish then marks rest as canceled. Works with both
+  sequential and parallel pools.
 
 ### Medium Impact
 
