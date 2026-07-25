@@ -268,8 +268,14 @@ class AppState {
   private async loadThumbnailsAndMeta() {
     const thumbs = new Map(this.thumbnails);
     const meta = new Map(this.imageMeta);
-    await Promise.all(
-      this.files.map(async (file) => {
+    const concurrency = 4;
+    const files = [...this.files];
+    const workers: Promise<void>[] = [];
+
+    const worker = async () => {
+      while (files.length) {
+        const file = files.shift();
+        if (!file) return;
         const [thumb, dims] = await Promise.all([
           getThumbnail(file.path),
           probeImage(file.path, this.settings.ffmpegPath),
@@ -278,8 +284,12 @@ class AppState {
         if (dims.ok && dims.width && dims.height) {
           meta.set(file.path, `${dims.width}×${dims.height}`);
         }
-      }),
-    );
+      }
+    };
+
+    for (let i = 0; i < concurrency; i++) workers.push(worker());
+    await Promise.all(workers);
+
     this.thumbnails = thumbs;
     this.imageMeta = meta;
   }

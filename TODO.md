@@ -37,9 +37,9 @@
 
 ### Medium Impact
 
-- [ ] **Thumbnail loading concurrency cap**  
+- [x] **Thumbnail loading concurrency cap**  
   `loadThumbnailsAndMeta()` uses `Promise.all` on every file at once — 100 files = 100 ffmpeg
-  processes. Add a concurrency limiter (e.g., p-limit or semaphore with max 4-8).
+  processes. Replaced with a worker pool capped at 4 concurrent ffmpeg processes.
 - [ ] **Format-specific quality hints**  
   The quality slider shows a generic 1-100 range but WebP quality 82 ≠ JPEG quality 82.
   Show tooltips per format: "WebP: 75-85 recommended", "JPEG: 85-95 for photos", etc.
