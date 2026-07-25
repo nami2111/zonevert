@@ -7,6 +7,7 @@ export type OutputFormat =
 export type Preset = "balanced" | "quality" | "small" | "lossless";
 export type CollisionMode = "overwrite" | "skip" | "rename";
 export type ResizeMode = "none" | "inside" | "fill" | "stretch";
+export type RotationMode = "none" | "rotate-90" | "rotate-180" | "rotate-270" | "flip-h" | "flip-v";
 
 export interface NamingOptions {
   prefix: string;
@@ -24,6 +25,7 @@ export interface ConversionIntent {
   outputDir: string;
   ffmpegPath: string;
   resize: { mode: ResizeMode; width: number; height: number };
+  rotation: RotationMode;
   naming: NamingOptions;
   advanced: {
     globalArgs: string[];
@@ -51,6 +53,7 @@ interface CreateIntentOptions {
   width?: number;
   height?: number;
   naming?: Partial<NamingOptions>;
+  rotation?: string;
   globalArgsText?: string;
   inputArgsText?: string;
   filterText?: string;
@@ -114,6 +117,7 @@ export function createConversionIntent(options: CreateIntentOptions = {}): Conve
       width: positiveInteger(options.width),
       height: positiveInteger(options.height),
     },
+    rotation: normalizeRotation(options.rotation),
     naming: normalizeNaming(options.naming),
     advanced: {
       globalArgs: parseArgs(options.globalArgsText),
@@ -172,7 +176,7 @@ function buildArgs(
 }
 
 export function buildFilterGraph(intent: ConversionIntent): string {
-  return [buildResizeFilter(intent.resize), intent.advanced.filterGraph].filter(Boolean).join(",");
+  return [buildResizeFilter(intent.resize), buildRotationFilter(intent.rotation), intent.advanced.filterGraph].filter(Boolean).join(",");
 }
 
 export function buildResizeFilter(resize: {
@@ -202,6 +206,17 @@ export function buildResizeFilter(resize: {
   }
 
   return `scale=${w}:${h}:force_original_aspect_ratio=decrease`;
+}
+
+export function buildRotationFilter(rotation: RotationMode): string {
+  switch (rotation) {
+    case "rotate-90": return "transpose=2";  // clockwise
+    case "rotate-180": return "transpose=2,transpose=2";
+    case "rotate-270": return "transpose=1"; // counterclockwise
+    case "flip-h": return "hflip";
+    case "flip-v": return "vflip";
+    default: return "";
+  }
 }
 
 function getOutputPath(
@@ -328,6 +343,13 @@ function normalizePreset(preset: unknown): Preset {
 function normalizeResizeMode(mode: unknown): ResizeMode {
   const value = String(mode || "").toLowerCase();
   return (supportedResizeModes.has(value) ? value : "none") as ResizeMode;
+}
+
+const supportedRotations = new Set<string>(["none", "rotate-90", "rotate-180", "rotate-270", "flip-h", "flip-v"]);
+
+function normalizeRotation(rotation: unknown): RotationMode {
+  const value = String(rotation || "").toLowerCase();
+  return (supportedRotations.has(value) ? value : "none") as RotationMode;
 }
 
 function normalizeCollisionMode(mode: unknown): CollisionMode {

@@ -31,7 +31,7 @@ import { buildFilterGraph } from "$lib/logic/conversion-plan";
 <section class="panel" aria-labelledby="resizeTitle">
   <div class="panel-header">
     <div>
-      <h2 id="resizeTitle">Resize</h2>
+      <h2 id="resizeTitle">Transform</h2>
       <p>{summary}</p>
     </div>
   </div>
@@ -53,6 +53,17 @@ import { buildFilterGraph } from "$lib/logic/conversion-plan";
     <label class="field">
       <span>Height</span>
       <input type="number" min="1" step="1" inputmode="numeric" bind:value={appState.settings.height} oninput={() => appState.persistSettings()} />
+    </label>
+    <label class="field">
+      <span>Rotation</span>
+      <select bind:value={appState.settings.rotation} onchange={() => appState.persistSettings()}>
+        <option value="none">None</option>
+        <option value="rotate-90">90° right</option>
+        <option value="rotate-180">180°</option>
+        <option value="rotate-270">90° left</option>
+        <option value="flip-h">Flip horizontal</option>
+        <option value="flip-v">Flip vertical</option>
+      </select>
     </label>
   </div>
 </section>

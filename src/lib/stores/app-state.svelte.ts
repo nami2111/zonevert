@@ -46,6 +46,7 @@ export interface Settings {
   resizeMode: string;
   width: string;
   height: string;
+  rotation: string;
   namePrefix: string;
   nameSuffix: string;
   sequential: boolean;
@@ -70,6 +71,7 @@ const DEFAULT_SETTINGS: Settings = {
   resizeMode: "none",
   width: "",
   height: "",
+  rotation: "none",
   namePrefix: "",
   nameSuffix: "",
   sequential: false,
@@ -162,6 +164,7 @@ class AppState {
       resizeMode: s.resizeMode,
       width: s.width ? Number(s.width) : undefined,
       height: s.height ? Number(s.height) : undefined,
+      rotation: s.rotation,
       naming: {
         prefix: s.namePrefix,
         suffix: s.nameSuffix,

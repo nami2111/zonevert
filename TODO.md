@@ -44,9 +44,10 @@
   The quality slider shows a generic 1-100 range but WebP quality 82 ≠ JPEG quality 82.
   Show tooltips per format: "WebP: 75-85 recommended", "JPEG: 85-95 for photos", etc.
   Added hints for webp, jpg, png, avif, jp2, and jls.
-- [ ] **Rotation / flip support**  
-  Add a rotation dropdown in ResizePanel: 90°, 180°, 270°, horizontal flip, vertical flip.
-  Maps to `transpose`, `hflip`, `vflip` FFmpeg filters.
+- [x] **Rotation / flip support**  
+  Added `RotationMode` type and `buildRotationFilter()` in conversion-plan.ts. Rotation dropdown
+  in ResizePanel (renamed to "Transform"): 90° right, 180°, 90° left, flip horizontal/vertical.
+  Uses ffmpeg `transpose`, `hflip`, `vflip` filters. Persisted in settings.
 - [ ] **Persistent conversion history**  
   Remember the last N conversions (file, format, settings, output path, success/fail)
   so users can re-run past jobs with a single click.
