@@ -88,15 +88,18 @@
 
 ## 🔧 Tech Debt
 
-- [ ] **Extract `formatCommand` / shell-quoting to shared utility**  
+- [x] **Extract `formatCommand` / shell-quoting to shared utility**  
   Used in both `conversion-plan.ts` and `app-state.svelte.ts` (script export).
-  Deduplicate into one location.
-- [ ] **Error message clarity from Rust**  
-  `ConvertResult` errors come through as "FFmpeg exited with code 1." with
-  no stderr snippet. Pipe the last line of stderr into the error for faster debugging.
-- [ ] **Window title should reflect progress**  
+  Already centralized — `formatCommand` lives in `conversion-plan.ts` and is imported
+  elsewhere. No deduplication needed.
+- [x] **Error message clarity from Rust**  
+  `ConvertResult` errors came through as "FFmpeg exited with code 1." with no stderr.
+  Now captures the last non-empty stderr line and appends it: "FFmpeg exited with code 1: Permission denied".
+- [x] **Window title should reflect progress**  
   Show "Zonevert — Converting (3/10)" in the window title during runs so users can
-  see progress from the taskbar / Alt+Tab.
-- [ ] **Platform identifier naming**  
+  see progress from the taskbar / Alt+Tab. Added `updateTitle()` called on conversion
+  start, after each item, and on finish/stop.
+- [x] **Platform identifier naming**  
   `getPlatform()` returns Electron identifiers `"win32"` / `"linux"` / `"darwin"` for
-  shell-quoting compat. Confusing everywhere else. Consider a separate normalized string.
+  shell-quoting compat with the ported conversion-plan code. Leaving as-is — the
+  convention is documented and changing it would risk path-quoting regressions.

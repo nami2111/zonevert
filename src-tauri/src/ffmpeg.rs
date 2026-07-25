@@ -122,6 +122,8 @@ pub async fn run(
 
     let app_clone = app.clone();
     let job_id_stderr = job_id.clone();
+    let last_stderr = std::sync::Arc::new(tokio::sync::Mutex::new(String::new()));
+    let last_stderr_clone = last_stderr.clone();
     let stderr_task = tauri::async_runtime::spawn(async move {
         let mut buf = [0u8; 8192];
         loop {
@@ -131,6 +133,11 @@ pub async fn run(
                 Err(_) => break,
             };
             let text = String::from_utf8_lossy(&buf[..n]).to_string();
+            {
+                let mut last = last_stderr_clone.lock().await;
+                *last = text.lines().filter(|l| !l.trim().is_empty()).last()
+                    .unwrap_or("").to_string();
+            }
             let _ = app_clone.emit(
                 "ffmpeg:log",
                 LogPayload {
@@ -146,6 +153,7 @@ pub async fn run(
     let status = child.wait().await;
     let _ = stdout_task.await;
     let _ = stderr_task.await;
+    let stderr_tail = last_stderr.lock().await.clone();
     registry.0.lock().await.remove(&job_id);
 
     match status {
@@ -158,10 +166,11 @@ pub async fn run(
         Ok(s) => ConvertResult {
             ok: false,
             code: s.code(),
-            signal: signal_str(&s), // unix-only signal name, None on Windows
+            signal: signal_str(&s),
             error: Some(format!(
-                "FFmpeg exited with code {}.",
-                s.code().unwrap_or(-1)
+                "FFmpeg exited with code {}{}",
+                s.code().unwrap_or(-1),
+                if stderr_tail.is_empty() { String::new() } else { format!(": {}", stderr_tail) }
             )),
         },
         Err(e) => ConvertResult {

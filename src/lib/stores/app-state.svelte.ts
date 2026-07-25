@@ -366,7 +366,9 @@ class AppState {
     }
     this.isConverting = true;
     this.cancelRequested = false;
+    this.stopAfterCurrent = false;
     this.logSummary = "Running";
+    this.updateTitle();
 
     const runnable = retry
       ? this.queue.filter((item) => item.status === "pending")
@@ -391,7 +393,9 @@ class AppState {
     this.isConverting = false;
     const wasCanceled = this.cancelRequested;
     this.cancelRequested = false;
+    this.stopAfterCurrent = false;
     this.logSummary = "Idle";
+    this.updateTitle();
     this.appendLog(wasCanceled ? "\nQueue canceled.\n" : "\nQueue finished.\n");
 
     if (!wasCanceled) {
@@ -456,6 +460,8 @@ class AppState {
 
     markResult(item, result, this.cancelRequested);
 
+    this.updateTitle();
+
     if (item.status === "canceled") {
       this.appendLog(`Canceled: ${item.outputPath}\n`);
     } else if (item.status === "done") {
@@ -518,6 +524,15 @@ class AppState {
     const title = summary.failed > 0 ? "Conversion finished with errors" : "Conversion complete";
     const body = parts.join(", ") || "Queue finished";
     showNotification({ title, body });
+  }
+
+  private updateTitle() {
+    if (this.isConverting) {
+      const done = this.queue.filter((item) => item.status !== "pending").length;
+      document.title = `Zonevert — Converting (${done}/${this.queue.length})`;
+    } else {
+      document.title = "Zonevert";
+    }
   }
 
   private async computeSizeSummary() {
