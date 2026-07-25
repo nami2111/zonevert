@@ -25,9 +25,10 @@
   After a queue finishes, show total input bytes → output bytes and compression ratio.
   Added `file_size` Rust command, `getFileSize` binding, and `computeSizeSummary()` in the
   store. Logs "Size: 12.4 MB → 3.2 MB (25.8%)" after each completed queue.
-- [ ] **Convert single file from source list**  
+- [x] **Convert single file from source list**  
   Per-file "Convert" action (right-click or inline button) so users can test settings
-  on one image without running the full queue.
+  on one image without running the full queue. Added play button per file row with
+  `convertSingleFile()` store method.
 - [ ] **"Stop after current" cancel mode**  
   `cancelCurrentJob` immediately SIGTERMs the running ffmpeg. Add a "Finish current, then stop"
   option for long individual conversions.

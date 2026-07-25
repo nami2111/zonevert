@@ -52,15 +52,27 @@
             <span>{extension(file.name || file.path).toUpperCase() || "IMAGE"}</span>
             <span class="file-dimensions">{appState.imageMeta.get(file.path) ?? ""}</span>
           </div>
-          <button
-            class="icon-button file-remove-button"
-            type="button"
-            aria-label="Remove {file.name || 'file'}"
-            title="Remove"
-            onclick={() => appState.removeFile(index)}
-          >
-            <Icon name="x" />
-          </button>
+          <div class="file-row-buttons">
+            <button
+              class="icon-button file-convert-button"
+              type="button"
+              aria-label="Convert only {file.name || 'file'}"
+              title="Convert this file"
+              disabled={appState.isConverting}
+              onclick={() => appState.convertSingleFile(index)}
+            >
+              <Icon name="play" />
+            </button>
+            <button
+              class="icon-button file-remove-button"
+              type="button"
+              aria-label="Remove {file.name || 'file'}"
+              title="Remove"
+              onclick={() => appState.removeFile(index)}
+            >
+              <Icon name="x" />
+            </button>
+          </div>
         </div>
       {/each}
     {/if}

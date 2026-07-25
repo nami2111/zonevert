@@ -569,6 +569,16 @@ svg {
   grid-template-columns: 32px minmax(0, 1fr) auto;
 }
 
+.file-row-buttons {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.file-convert-button {
+  color: var(--accent);
+}
+
 .queue-row {
   grid-template-columns: minmax(0, 1fr) auto;
 }

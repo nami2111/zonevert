@@ -24,7 +24,6 @@ import {
 } from "$lib/logic/conversion-plan";
 import {
   createQueue,
-  resolveCollisions,
   summarizeQueue,
   markRunning,
   markResult,
@@ -310,6 +309,22 @@ class AppState {
   private getConcurrency(): number {
     const c = this.settings.concurrency;
     return Number.isFinite(c) ? Math.min(Math.max(c, 1), 8) : 1;
+  }
+
+  async convertSingleFile(index: number) {
+    if (this.isConverting || !this.files[index]) return;
+    const file = this.files[index];
+    const intent = this.intent;
+    const plan = planConversion(file, intent, index);
+
+    this.queue = [{
+      id: crypto.randomUUID(),
+      file,
+      args: plan.args,
+      outputPath: plan.outputPath,
+      status: "pending" as const,
+    }];
+    await this.runConversion(true);
   }
 
   async runConversion(retry = false) {
