@@ -79,49 +79,26 @@ automatically.
 
 ## FFmpeg
 
-FFmpeg is bundled as a Tauri [external binary](https://v2.tauri.app/develop/sidecar/)
-(sidecar) and shipped inside each installer, so **no system FFmpeg is required**.
-Resolution order when the app runs a conversion:
+Zonevert requires FFmpeg on your system. Resolution order when the app runs a
+conversion:
 
 1. Custom path from the Advanced panel (if set)
 2. `FFMPEG_PATH` environment variable
-3. Bundled sidecar
-4. `ffmpeg` on `PATH`
+3. `ffmpeg` on `PATH`
 
-The sidecar binaries are downloaded by `scripts/fetch-ffmpeg.mjs` (run
-automatically via the `predev` / `prepackage:*` npm hooks) and are
-**pinned to a specific version with a verified SHA-256** — a changed or
-mismatched download fails the build. Current pins:
-
-| Platform | Source | Version | Triple |
-|----------|--------|---------|--------|
-| Linux   | johnvansickle.com | 7.0.2 static (GPLv3) | `x86_64-unknown-linux-gnu` |
-| Windows | BtbN/FFmpeg-Builds | autobuild 2026-07-07 win64 gpl | `x86_64-pc-windows-msvc` |
-| macOS (Apple Silicon) | johnvansickle.com | 7.0.2 static (GPLv3) | `aarch64-apple-darwin` |
-| macOS (Intel) | johnvansickle.com | 7.0.2 static (GPLv3) | `x86_64-apple-darwin` |
-
-> GPL note: johnvansickle static builds are GPLv3, BtbN `gpl` is GPL.
-> These are fine for gratis/non-commercial distribution; see Acknowledgements.
+Install FFmpeg through your package manager or download from
+[ffmpeg.org](https://ffmpeg.org/download.html).
 
 ### Supported output formats
-
-The UI exposes (all encoded by the bundled FFmpeg):
 
 `webp`, `jpg`, `png`, `avif`, `tiff`, `bmp`, `gif`, `apng`, `jp2` (JPEG 2000),
 `jls` (JPEG-LS), `exr` (OpenEXR), `qoi`, `tga` (Targa).
 
-**Input** accepts many more decoders (including `heic`/`heif`, which FFmpeg
-can *decode* but not *encode* in this build — so HEIC is import-only,
-convertible to any of the output formats above). FFmpeg's full decoder list is
-far broader; use the Advanced panel for anything not in the dropdown.
+**Input** accepts any format your FFmpeg build can decode, including
+`heic`/`heif` (import-only — Zonevert can read HEIC but cannot encode it).
 
-Notable gaps in the bundled build: **JPEG XL (jxl)** is not compiled into
-johnvansickle 7.0.2 static, and there is **no HEIF muxer** (can't write
-`.heic`). Both require a custom FFmpeg build if needed.
-
-The binaries live in `src-tauri/binaries/` and are git-ignored (fetched on
-demand). Bump the URL + SHA-256 in the script when you intentionally want a
-newer FFmpeg.
+Notable gaps in typical distro FFmpeg builds: **JPEG XL (jxl)** and
+**HEIF encoding** — both require a custom FFmpeg build if needed.
 
 ## Architecture
 
