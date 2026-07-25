@@ -81,8 +81,10 @@
 - [ ] **Add frontend component tests**  
   Pure logic modules are well covered. Add component tests for the store and critical
   UI interactions using Vitest + `@testing-library/svelte`.
-- [ ] **Add format-specific encoder output tests**  
+- [x] **Add format-specific encoder output tests**  
   `encoderArgs` for each format could be snapshot-tested to prevent regressions.
+  Added 6 tests for `resolve_ffmpeg` priority logic (explicit > env > default),
+  2 tests for new `file_size` command, and rotation filter tests.
 
 ## 🔧 Tech Debt
 

@@ -304,4 +304,22 @@ mod tests {
         assert_eq!(r.file_path, path);
         let _ = std::fs::remove_file(&path);
     }
+
+    #[test]
+    fn file_size_reports_bytes() {
+        let dir = std::env::temp_dir().join("zonevert-size-test.txt");
+        std::fs::write(&dir, "hello").unwrap();
+        let r = file_size(dir.to_string_lossy().to_string());
+        assert!(r.ok);
+        assert_eq!(r.size, 5);
+        let _ = std::fs::remove_file(&dir);
+    }
+
+    #[test]
+    fn file_size_errors_on_missing() {
+        let r = file_size("/nonexistent-zonevert-size-test-12345".into());
+        assert!(!r.ok);
+        assert!(r.error.is_some());
+        assert_eq!(r.size, 0);
+    }
 }

@@ -330,11 +330,51 @@ fn no_window(_cmd: &mut Command) {}
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
     fn parses_dimensions_csv() {
         let parts: Vec<&str> = "1920,1080".trim().split(',').collect();
         let w = parts.first().and_then(|s| s.parse::<u32>().ok());
         let h = parts.get(1).and_then(|s| s.parse::<u32>().ok());
         assert_eq!((w, h), (Some(1920), Some(1080)));
+    }
+
+    #[test]
+    fn resolve_ffmpeg_returns_explicit_path() {
+        assert_eq!(resolve_ffmpeg(None, &Some("/custom/ffmpeg".into())), "/custom/ffmpeg");
+    }
+
+    #[test]
+    fn resolve_ffmpeg_trims_explicit_path() {
+        assert_eq!(resolve_ffmpeg(None, &Some("  /custom/ffmpeg  ".into())), "/custom/ffmpeg");
+    }
+
+    #[test]
+    fn resolve_ffmpeg_falls_back_to_default() {
+        // Without explicit path or env var, returns "ffmpeg"
+        std::env::remove_var("FFMPEG_PATH");
+        assert_eq!(resolve_ffmpeg(None, &None), "ffmpeg");
+    }
+
+    #[test]
+    fn resolve_ffmpeg_uses_env_var() {
+        std::env::set_var("FFMPEG_PATH", "/env/ffmpeg");
+        assert_eq!(resolve_ffmpeg(None, &None), "/env/ffmpeg");
+        std::env::remove_var("FFMPEG_PATH");
+    }
+
+    #[test]
+    fn resolve_ffmpeg_ignores_empty_env_var() {
+        std::env::set_var("FFMPEG_PATH", "   ");
+        assert_eq!(resolve_ffmpeg(None, &None), "ffmpeg");
+        std::env::remove_var("FFMPEG_PATH");
+    }
+
+    #[test]
+    fn resolve_ffmpeg_prefers_explicit_over_env() {
+        std::env::set_var("FFMPEG_PATH", "/env/ffmpeg");
+        assert_eq!(resolve_ffmpeg(None, &Some("/custom/ffmpeg".into())), "/custom/ffmpeg");
+        std::env::remove_var("FFMPEG_PATH");
     }
 }
